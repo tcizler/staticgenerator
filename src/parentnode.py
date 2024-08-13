@@ -2,7 +2,7 @@ from htmlnode import HTMLNode
 from leafnode import LeafNode
 
 class ParentNode(HTMLNode):
-    def __init__(children,tag = None,props = None):
+    def __init__(self,children,tag = None,props = None):
         super().__init__(tag, None, children, props)
 
     def to_html(self):
@@ -10,23 +10,21 @@ class ParentNode(HTMLNode):
             raise ValueError("node is missing a tag")
         if self.children == None:
             raise ValueError("node has no children")
-        output = ""
+        childrenHTML = ""
         for node in self.children:
-            if node.tag != None:
-                output += f"<{node.tag}{node.props_to_html()}>{node.value}</{node.tag}>"
-            else:
-                output += f"{node.value}"
-        return output
+            childrenHTML += node.to_html()
+        return f"<{self.tag}{self.props_to_html()}>{childrenHTML}</{self.tag}>"
 
-## add Repr ##    
+    def __repr__(self):
+        return f"ParentNode({self.tag}, {self.value}, children: {self.children} , {self.props})"
 
     
 t = ParentNode([
-        LeafNode("b", "Bold text"),
-        LeafNode(None, "Normal text"),
-        LeafNode("i", "italic text"),
-        LeafNode(None, "Normal text"),
+        LeafNode("Bold text", "b"),
+        LeafNode("Normal text", None),
+        LeafNode("italic text", "i", {"style":".stinky"}),
+        LeafNode("Normal text", None),
     ],    
     "p"
 )
-print(t)
+print(t.to_html())
